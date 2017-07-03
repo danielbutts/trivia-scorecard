@@ -9,6 +9,7 @@
     "lint": "eslint ./db/model/User.js --fix"
   },
   "dependencies": {
+    "dotenv": "^4.0.0",
     "bcrypt-as-promised": "^1.1.0",
     "body-parser": "^1.17.2",
     "cookie-parser": "^1.4.3",

@@ -5,6 +5,7 @@ const knex = require('../db/connection');
 const router = express.Router();
 
 router.get('/session', (req, res) => {
+  console.log('get /session');
   if (req.session.userId !== undefined) {
     res.status(200).json(true);
   } else {
@@ -13,6 +14,7 @@ router.get('/session', (req, res) => {
 });
 
 router.post('/session', (req, res, next) => { // eslint-disable-line consistent-return
+  console.log('post /session');
   const { name, password } = req.body;
 
   if (!name || !name.trim()) {

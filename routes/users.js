@@ -13,23 +13,32 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res, next) => {
-  const { name, password, isAdmin } = req.body;
+  console.log('post /users');
+  const { name, password } = req.body;
+  const isAdmin = req.body.isAdmin || false;
   if (name === undefined) {
     res.status(400).json({ error: 'Missing required parameter \'name\'.' });
   } else if (password === undefined) {
     res.status(400).json({ error: 'Missing required parameter \'password\'.' });
   } else {
+    console.log('here');
     User.getUsers({ name }).then((results) => { // eslint-disable-line consistent-return
       if (results.length > 0) {
+        console.log('there');
         res.status(400).json({ error: 'Username already exists.' });
       } else {
-        return bcrypt.hash(password, 12).then((hashedPassword) => {
-          User.createUser({ name, password: hashedPassword, isAdmin });
-        }).then((users) => {
-          const user = users[0];
+        console.log('wherever');
+        return bcrypt.hash(password, 12).then(hashedPassword =>
+          User.createUser({
+            name,
+            password: hashedPassword,
+            is_admin: isAdmin }))
+        .then((inserts) => {
+          console.log(inserts);
+          const user = inserts[0];
           delete user.hashed_password;
           req.session.userId = user.id;
-          res.json({ message: 'Successfully created user.', user: users[0] });
+          res.json({ message: 'Successfully created user.', user });
         });
       }
     })

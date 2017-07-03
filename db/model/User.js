@@ -24,11 +24,8 @@ class User {
   }
 
   static createUser(options) {
-    return knex('users').insert({
-      name: options.name,
-      password: 'test',
-      is_admin: options.isAdmin,
-    }).returning('*');
+    console.log(options);
+    return knex('users').returning('*').insert(options);
   }
 
 }
