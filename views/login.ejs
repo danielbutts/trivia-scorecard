@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Trivia Scorecard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <main class="container">
+      <div class="row">
+        <form id="loginForm" class="col offset-s2 s8">
+          <div class="card">
+            <div class="card-content">
+              <span class="card-title">Log in</span>
+              <div class="row">
+                <div class="input-field col s12">
+                  <input placeholder="Email" id="email" type="text" class="validate">
+                  <label for="email">Email</label>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="input-field col s12">
+                  <input placeholder="Password" id="password" type="password" class="validate">
+                  <label for="password">Password</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-action">
+              <button type="submit" name="action">
+                Log in
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+  </body>
+  <script>
+    $('#loginForm').submit((event) => {
+      event.preventDefault();
+
+      const email = $('#email').val().trim();
+      const password = $('#password').val();
+
+      const options = {
+        contentType: 'application/json',
+        data: JSON.stringify({ email, password }),
+        dataType: 'json',
+        type: 'POST',
+        url: '/session'
+      };
+
+      $.ajax(options)
+        .done(() => {
+          window.location.href = '/';
+        })
+        .fail(($xhr) => {
+          alert($xhr.responseText);
+        });
+    });
+  </script>
+</html>
