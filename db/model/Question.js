@@ -2,20 +2,29 @@
 const knex = require('../connection');
 
 class Question {
-  constructor(id, name, ownerId) {
+  constructor(id, text, gameId, points) {
     this.id = id;
-    this.name = name;
-    this.gameId = ownerId;
+    this.text = text;
+    this.gameId = gameId;
+    this.points = points;
   }
 
   static getQuestionById(id) {
-    return knex('questions').where({ id }).then(results => (results[0]));
+    knex('questions').where({ id }).then(results => (results[0]));
   }
 
   static getQuestions(options) {
-    return knex('questions').where(options).then(results => (results));
+    knex('questions').where(options).then(results => (results));
   }
 
+  saveQuestion() {
+    knex('questions').insert({
+      text: this.text,
+      game_id: this.gameId,
+      points: this.points,
+    }).returning('*')
+    .then(results => results[0]);
+  }
 }
 
 module.exports = Question;
