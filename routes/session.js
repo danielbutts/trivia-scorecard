@@ -4,64 +4,57 @@ const knex = require('../db/connection');
 
 const router = express.Router();
 
-router.get('/session', (req, res) => {
-  console.log('get /session');
-  if (req.session.userId !== undefined) {
-    res.status(200).json(true);
+const checkSession = (req, res, next) => {
+  if (req.session.userId) {
+    next();
   } else {
-    res.status(200).json(false);
+    const unauthorized = {
+      status: 401,
+      message: 'Unauthorized',
+    };
+    next(unauthorized);
   }
-});
+};
 
-router.post('/session', (req, res, next) => { // eslint-disable-line consistent-return
-  console.log('post /session');
+router.post('/', (req, res, next) => {
   const { name, password } = req.body;
-
-  if (!name || !name.trim()) {
-    return next({
-      status: 400,
-      message: 'Email must not be blank',
-    });
-  }
-  if (!password) {
-    return next({
-      status: 400,
-      message: 'Password must not be blank',
-    });
-  }
-
-  let user;
-  knex('users').where({ name }).then((rows) => {
-    if (rows.length === 0) {
-      throw new Error({
-        status: 400,
-        message: 'Bad email or password',
+  let error;
+  if (name === '' || name.trim() === '') {
+    res.status(400).json({ error: 'Name must not be blank' });
+  } else if (password === '') {
+    res.status(400).json({ error: 'Password must not be blank' });
+  } else {
+    let user;
+    knex('users').where({ name })
+      .then((users) => {
+        if (users.length === 0) {
+          res.status(400).json({ error: 'Bad email or password' });
+        } else {
+          user = users[0];
+          bcrypt.compare(password, user.password).then(() => {
+            delete user.password;
+            req.session.userId = user.id;
+            if (error !== undefined) {
+              res.status(400).json({ error });
+            } else {
+              res.status(200).json({});
+            }
+          })
+          .catch(bcrypt.MISMATCH_ERROR, () => {
+            error = 'Bad email or password';
+            res.status(400).json({ error });
+          });
+        }
+      })
+      .catch((err) => {
+        next(err);
       });
-    }
-    user = rows[0];
-
-    return bcrypt.compare(password, user.hashed_password);
-  })
-  .then(() => {
-    delete user.hashed_password;
-    req.session.userId = user.id;
-    res.send(user);
-  })
-  .catch(bcrypt.MISMATCH_ERROR, () => {
-    throw new Error({
-      status: 400,
-      message: 'Bad email or password',
-    });
-  })
-  .catch((err) => {
-    console.error(err);
-    next(err);
-  });
+  }
 });
 
-router.delete('/session', (req, res) => {
+router.get('/logout', (req, res) => {
   req.session = null;
-  res.status(200).json(true);
+  res.redirect('/auth/login');
 });
 
-module.exports = router;
+module.exports = { router, checkSession };

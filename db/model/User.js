@@ -24,7 +24,6 @@ class User {
   }
 
   static createUser(options) {
-    console.log(options);
     return knex('users').returning('*').insert(options);
   }
 

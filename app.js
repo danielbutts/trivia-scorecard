@@ -8,6 +8,7 @@ const cookieSession = require('cookie-session');
 const index = require('./routes/index');
 const auth = require('./routes/auth');
 const users = require('./routes/users');
+const session = require('./routes/session').router;
 require('dotenv').config();
 
 const app = express();
@@ -29,9 +30,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/users', users);
 app.use('/auth', auth);
+app.use('/session', session);
+app.use('/users', users);
+app.use('/', index);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

@@ -1,10 +1,11 @@
 const express = require('express');
+const checkSession = require('./session').checkSession;
 
 const router = express.Router();
 
-/* GET home page. */
+router.use(checkSession);
 router.get('/', (req, res) => {
-  res.render('index', { title: 'Express' });
+  res.render('index');
 });
 
 module.exports = router;

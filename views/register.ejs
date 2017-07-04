@@ -9,36 +9,40 @@
   </head>
   <body>
     <main class="container">
-        <form id="registerForm" class="col offset-s2 s8">
-          <div class="row">
-            <div class="col-xs-offset-2 col-xs-8">
-              Register:
-            </div>
+      <div class="row">
+        <div id="message" class="col-xs-offset-2 col-xs-8 message"></div>
+      </div>
+      <form id="registerForm" class="col offset-s2 s8">
+        <div class="row">
+          <div class="col-xs-offset-2 col-xs-8">
+            Register:<br><br>
           </div>
-          <div class="row">
-            <div class="col-xs-offset-2 col-xs-8">
-              <input placeholder="Name" id="name" type="text">
-              <label for="name">Name</label>
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-offset-2 col-xs-8">
+            <input placeholder="Name" id="name" type="text">
+            <label for="name">Name</label><br><br>
           </div>
-          <div class="row">
-            <div class="col-xs-offset-2 col-xs-8">
-              <input placeholder="Password" id="password" type="password">
-              <label for="password">Password</label>
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-offset-2 col-xs-8">
+            <input placeholder="Password" id="password" type="password">
+            <label for="password">Password</label><br><br>
           </div>
-          <div class="row">
-            <div class="col-xs-offset-2 col-xs-8">
-            <button type="submit" name="action">
-              Register
-            </button>
-          </div>
-        </form>
+        </div>
+        <div class="row">
+          <div class="col-xs-offset-2 col-xs-8">
+          <button type="submit" name="action">
+            Register
+          </button>
+        </div>
+      </form>
     </main>
   </body>
   <script>
     $('#registerForm').submit((event) => {
       event.preventDefault();
+      $('#message').empty();
 
       const name = $('#name').val().trim();
       const password = $('#password').val();
@@ -56,7 +60,7 @@
           window.location.href = '/auth/login?message=Registration Successful';
         })
         .fail(($xhr) => {
-          console.log($xhr.responseText);
+          $('#message').append(`${JSON.parse($xhr.responseText).error}<br><br>`);
         });
     });
   </script>
